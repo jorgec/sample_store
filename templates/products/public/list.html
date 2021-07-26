@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="list-app">
+        <div class="card card-body table-responsive">
+            <h3 class="card-title">
+                Products
+            </h3>
+            <table class="table table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th style="width: 20%;">Price</th>
+                    <th style="width: 20%;">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in page_obj %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td class="text-right">
+                    <span class="price-text">
+                        {{ product.price }}
+                    </span>
+                        </td>
+                        <td>
+                            {% if request.user.is_authenticated %}
+                                <a href="#!" class="btn btn-success btn-sm" @click.prevent="addToCart('{{ product.id }}')">
+                                    Add to cart
+                                </a>
+                            {% else %}
+                                <a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a> to
+                                purchase this item
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="card-footer">
+                {% include 'common/pagination.html' %}
+            </div>
+        </div>
+
+        <div class="alert alert-info my-5" v-if="isLoading">
+            Loading cart...
+        </div>
+        <table class="table" v-else>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Remove</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tr v-for="item in tempCart">
+                <td>
+                    [[ item.product.name ]]
+                </td>
+                <td>
+                    P [[ item.product.price ]]
+                </td>
+                <td class="d-flex">
+                    <a class="btn btn-light  btn-sm" @click.prevent="item.quantity--">-</a>
+                    <span class="form-control form-control-sm">
+                        [[ item.quantity ]]
+                    </span>
+                    <a class="btn btn-light  btn-sm" @click.prevent="item.quantity++">+</a>
+                </td>
+                <td class="column-6">
+                    <a href="#!" @click.prevent="updateCart('remove', item.product.id, 1)" class="btn btn-danger btn-sm text-white">
+                        -
+                    </a>
+                </td>
+                <td class="column-5">
+                    P [[ item.subtotal_repr ]]
+                </td>
+            </tr>
+            <tr class="table_row">
+                <td colspan="3">
+                    <a href="#!" @click.prevent="updateDB()" class="btn btn-success btn-sm">Update Cart</a>
+                </td>
+                <td>TOTAL</td>
+                <td>P [[ cart.db.total_price_repr ]]</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
+
+{% block footer_js %}
+    {% include "products/public/parts/list_scripts.html" %}
+{% endblock %}

@@ -1,0 +1,25 @@
+<nav aria-label="Pagination">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1&{{ urlparams }}">&laquo; First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ urlparams }}">Previous</a>
+            </li>
+        {% endif %}
+        <li class="page-item">
+            <a class="page-link current active" href="#!">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </a>
+        </li>
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ urlparams }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{ urlparams }}">Last &raquo;</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

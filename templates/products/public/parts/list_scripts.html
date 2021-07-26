@@ -1,0 +1,95 @@
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#list-app',
+        delimiters: ['[[', ']]'],
+        data: {
+            isLoading: true,
+            hideCart: true,
+            cart: null,
+            tempCart: null,
+            showModal: false,
+            selectedProducts: [],
+            products: []
+        },
+        methods: {
+            addToCart(id) {
+                this.updateCart("add", id, 1);
+
+                this.loadCart();
+            },
+            loadCart() {
+                let url = "{% url 'cart_api' %}";
+
+                axios.get(url)
+                    .then(response => {
+                        this.cart = response.data;
+                        this.tempCart = this.cart.db.items;
+                        this.isLoading = false;
+                        // $("#checkout_items").html(this.cart.db.total_items);
+
+                        console.log(this.cart);
+                    }).catch(err => {
+                    console.log(err.response);
+                });
+            },
+            updateDB() {
+                this.isLoading = true;
+                axios.post(
+                    "{% url 'cart_api' %}",
+                    this.tempCart,
+                    {
+                        headers: {
+                            "X-CSRFTOKEN": "{{ csrf_token }}"
+                        }
+                    }
+                ).then(response => {
+                    this.cart = response.data;
+                    this.tempCart = this.cart.db.items;
+                    this.isLoading = false;
+                }).catch(e => {
+                    console.log(e);
+                });
+            },
+            updateCart(action, product, quantity) {
+                this.isLoading = true;
+                let data = {
+                    data: {
+                        action: action,
+                        product: product,
+                        quantity: quantity
+                    }
+                };
+                this.isLoading = true;
+                axios.put(
+                    "{% url 'cart_api' %}",
+                    data,
+                    {
+                        headers: {
+                            "X-CSRFTOKEN": "{{ csrf_token }}"
+                        }
+                    }
+                ).then(response => {
+                    this.loadCart();
+                }).catch(e => {
+                    console.log(e);
+                });
+            },
+            destroyCart() {
+                this.isLoading = true;
+                axios.delete(
+                    "{% url 'cart_api' %}",
+                    {
+                        headers: {
+                            "X-CSRFTOKEN": "{{ csrf_token }}"
+                        }
+                    }
+                ).then(response => {
+                    this.loadCart();
+                });
+            }
+        },
+        mounted() {
+            this.loadCart();
+        }
+    });
+</script>
