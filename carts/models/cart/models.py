@@ -55,3 +55,29 @@ class Cart(IdentityBase, AuditBase, MetaBase):
     @property
     def total_price_repr(self):
         return "{:,}".format(self.total_price)
+
+    ################################################################################
+    # === Model Methods ===
+    ################################################################################
+    def checkout(self):
+        items = self.cart_items.all()
+
+        if items and self.user:
+            Checkout = apps.get_model('checkouts.Checkout')
+            CheckoutItem = apps.get_model('checkouts.CheckoutItem')
+
+            checkout = Checkout.objects.create(
+                cart=self,
+                user=self.user
+            )
+
+            for item in items:
+                checkout_item = CheckoutItem.objects.create(
+                    product_name=item.product.name,
+                    product_price=item.product.price,
+                    quantity=item.quantity,
+                    product=item.product,
+                    checkout=checkout
+                )
+            return checkout
+        return None

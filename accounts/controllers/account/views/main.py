@@ -20,7 +20,7 @@ class AccountPostLoginView(View):
             if request.user.is_admin:
                 return HttpResponseRedirect(ADMIN_URL)
             else:
-                return HttpResponseRedirect(reverse("event_list"))
+                return HttpResponseRedirect(reverse("home"))
         except AttributeError:
             return HttpResponseRedirect(reverse("login"))
 
@@ -87,7 +87,7 @@ class AccountLoginView(View):
                     next = request.GET.get('next', None)
                     url = reverse('postlogin')
                     if next:
-                        url += "?next=" + next
+                        url += "?next=/" + next
                     return HttpResponseRedirect(url)
             else:
                 messages.error(request, "Invalid credentials", extra_tags="warning")
