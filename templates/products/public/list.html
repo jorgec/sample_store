@@ -89,7 +89,10 @@
             </tr>
             <tr class="table_row">
                 <td colspan="3">
-                    <a href="#!" @click.prevent="updateDB()" class="btn btn-success btn-sm">Update Cart</a>
+                    <div class="btn-group">
+                        <a href="#!" @click.prevent="updateDB()" class="btn btn-success">Update Cart</a>
+                        <a href="{% url 'card_payments' %}" class="btn btn-primary">Checkout</a>
+                    </div>
                 </td>
                 <td>TOTAL</td>
                 <td>P [[ cart.db.total_price_repr ]]</td>
