@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="card-entry-app">
+        <div class="card card-body">
+            <h3 class="card-title">Your Cart</h3>
+            <p>Total: P{{ cart.total_price_repr }}</p>
+
+            <h3 class="card-title">Card Entry</h3>
+            <div class="row my-2">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Name on Card</label>
+                        <input type="text" class="form-control" v-model="card.name">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Card Number</label>
+                        <input type="number" class="form-control" v-model="card.number">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Expiry Month</label>
+                        <input type="number" class="form-control" v-model="card.exp_month">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Expiry Year</label>
+                        <input type="number" class="form-control" v-model="card.exp_year">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>CVC</label>
+                        <input type="number" class="form-control" v-model="card.cvc">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-success" @click.prevent="tokenCreate()">
+                    Submit
+                </button>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block footer_js %}
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#card-entry-app',
+            delimiters: ['[[', ']]'],
+            data: {
+                magpie: {
+                    key: btoa("pk_test_F5wsbi6sNRjFX20BZIFFsQ:"),
+                    urls: {
+                        token: "https://api.magpie.im/v1/tokens"
+                    }
+                },
+                card: {
+                    name: "{{ request.user.username }}",
+                    number: "4242424242424242",
+                    exp_month: null,
+                    exp_year: null,
+                    cvc: null
+                },
+                token: null
+
+            },
+            methods: {
+                cardFormChecks() {
+                    for (let key in this.card) {
+                        if (this.card[key] == null) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                tokenCreate() {
+                    if (! this.cardFormChecks()) {
+                        toastr.error("All fields are required");
+                        return false;
+                    }
+
+                    let headers = {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "Authorization": "Basic " + this.magpie.key,
+                        "'Access-Control-Allow-Origin": "*"
+                    }
+
+                    const options = {
+                        url: this.magpie.urls.token,
+                        method: 'POST',
+                        headers: headers,
+                        data: {
+                            card: this.card
+                        }
+                    }
+
+
+                    axios(options).then(response => {
+                        // charge card and stuff
+                    });
+
+                    // mockup workaround for CORS, assume payment went through
+                    window.location = "{% url 'checkout_success' %}";
+
+                }
+            }
+        });
+    </script>
+{% endblock %}

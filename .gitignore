@@ -1,2 +1,6 @@
 
 .idea/
+
+*.pyc
+
+accounts/__pycache__/

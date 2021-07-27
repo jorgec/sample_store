@@ -72,6 +72,7 @@ class Cart(IdentityBase, AuditBase, MetaBase):
             )
 
             for item in items:
+                item.product.product_inventory.reduce(item.quantity)
                 checkout_item = CheckoutItem.objects.create(
                     product_name=item.product.name,
                     product_price=item.product.price,
@@ -79,5 +80,8 @@ class Cart(IdentityBase, AuditBase, MetaBase):
                     product=item.product,
                     checkout=checkout
                 )
+
+            self.status = CartStateConstants.CLOSED
+            self.save(force_update=True)
             return checkout
         return None

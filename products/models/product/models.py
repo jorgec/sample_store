@@ -20,6 +20,16 @@ class Product(IdentityBase, AuditBase, MetaBase):
         return self.name
 
     ################################################################################
+    # === Properties ===
+    ################################################################################
+    @property
+    def stock(self):
+        try:
+            return self.product_inventory.quantity
+        except AttributeError:
+            return 0
+
+    ################################################################################
     # === Model-specific methods ===
     ################################################################################
     def get_price(self):

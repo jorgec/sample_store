@@ -26,4 +26,6 @@ urlpatterns = [
     path("", ProductPublicListView.as_view(), name="home"),
     path("products/", include("products.urls")),
     path("cart/", include("carts.urls")),
+
+    path("checkout/", include("checkouts.urls")),
 ]

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="checkouts-list-app">
+    <div class="card card-body">
+        <h3 class="card-title">
+            Checkouts
+        </h3>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th style="width: 50%">Items</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for checkout in checkouts %}
+                <tr>
+                    <td>
+                        {{ checkout.created }}
+                    </td>
+                    <td>
+                        {{ checkout.user }}
+                    </td>
+                    <td>
+                        <ul class="list-group list-group-flush">
+                            {% for item in checkout.checkoutitem_set.all %}
+                                <li class="list-group-item">
+                                    <code>{{ item.quantity }}</code> x
+                                    {{ item.product_name }} @
+                                    <code>P {{ item.product_price_repr }}</code> each
+                                    <strong>
+                                        <code>P {{ item.subtotal_repr }}</code>
+                                    </strong>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        {{ checkout.get_status_display }}
+                    </td>
+                    <td>
+                        <code>P {{ checkout.total_amount_repr }}</code>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

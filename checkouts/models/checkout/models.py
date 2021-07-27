@@ -31,3 +31,11 @@ class Checkout(IdentityBase, AuditBase, MetaBase):
         null=True,
         default=None
     )
+
+    @property
+    def total_amount(self):
+        return sum([item.subtotal for item in self.checkoutitem_set.all()])
+
+    @property
+    def total_amount_repr(self):
+        return "{:,}".format(self.total_amount)

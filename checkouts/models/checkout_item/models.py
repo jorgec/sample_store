@@ -52,3 +52,7 @@ class CheckoutItem(IdentityBase, AuditBase, MetaBase):
     @property
     def subtotal_repr(self):
         return "{:,}".format(self.subtotal)
+
+    @property
+    def product_price_repr(self):
+        return "{:,}".format(self.product_price)
